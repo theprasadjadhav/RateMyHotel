@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { Hotel,validateHotelSchema } = require("../models/hotel");
+const { Hotel, validateHotelSchema } = require("../models/hotel");
 
+
+/*----------------------async error function--------------------------*/
 function asyncError(fn) {
     return function (req, res, next) {
         fn(req, res, next).catch(err => next(err));
     }
 }
 
+/*----------------------validate hotel middle--------------------------*/
 const validateHotel = (req, res, next) => {
-    
+
     const { error } = validateHotelSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(e => e.message).join(",");
