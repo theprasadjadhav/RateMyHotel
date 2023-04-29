@@ -5,6 +5,7 @@ const methodOverride = require("method-override");
 const path = require("path");
 const ejsMate = require("ejs-mate")
 const { Hotel, validateHotelSchema } = require("./models/hotel");
+const hotelRoutes = require("./routes/hotelRoutes")
 
 /*----------------------creating app--------------------------*/
 const app = express();
@@ -39,87 +40,10 @@ class AppError extends Error{
     }
 }
 
-/*----------------------async error function--------------------------*/
-function asyncError(fn) {
-    return function (req, res, next) {
-        fn(req, res, next).catch(err => next(err));
-    }
-}
-
-/*----------------------validate hotel middle--------------------------*/
-
-const validateHotel = (req, res, next) => {
-
-    console.log(req.body);
-    const { error } = validateHotelSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(e => e.message).join(",");
-        throw new AppError(msg, 400);
-    }
-    else {
-        next();
-    }
-}
-
-/*----------------------routes--------------------------*/
-
-app.get("/hotels", asyncError(async (req, res) => {
-    const hotels = await Hotel.find({});
-    res.render("hotel/index", { hotels });
-    
-        
-}))
-
-app.get("/hotels/new",  (req, res) => {
-    res.render("hotel/new");
-})
-
-app.post("/hotels",validateHotel, asyncError(async (req, res) => {
-    const hotel = new Hotel(req.body.hotel);
-    await hotel.save();
-    res.redirect(`/hotels`);
-
-}))
+/*----------------------hotel routes--------------------------*/
+app.use("/", hotelRoutes);
 
 
-app.get("/hotels/:id", asyncError(async(req, res)=> {
-    const { id } = req.params;
-    const hotel = await Hotel.findById(id);
-    if(hotel){
-        res.render("hotel/view", { hotel });
-    } else {
-        throw new AppError("hotel not found", 404);
-    }
-    
-}))
-
-app.get("/hotels/:id/edit", asyncError(async (req, res) => {
-    const { id } = req.params;
-    const hotel = await Hotel.findById(id);
-    if(hotel){
-        res.render("hotel/edit", { hotel });
-    } else {
-        throw new AppError("hotel not found", 404);
-    }
-   
-}))
-
-app.put("/hotels/:id",validateHotel, asyncError(async(req, res)=> {
-    const { id } = req.params;
-    const hotel = await Hotel.findByIdAndUpdate(id,{...req.body.hotel},{new:true});
-    if (hotel) {
-        res.redirect(`/hotels/${hotel._id}`);
-    }
-    else {
-        throw new AppError("hotel not found", 404);
-    }
-}))
-
-app.delete("/hotels/:id", asyncError(async (req, res) => {
-    const { id } = req.params;
-    await Hotel.findByIdAndDelete(id);
-    res.redirect("/hotels");
-}))
 
 /*----------------------error handling route--------------------------*/
 
