@@ -1,0 +1,25 @@
+<% layout("layout/boilerplate") -%>
+    <div class="row mb-3">
+    <div class="card col-lg-6 offset-lg-3">
+        <div class="d-flex justify-content-center mt-3">
+            <img src="<%= hotel.photo1 %>" class="card-img-top rounded" alt="...">
+        </div>
+        <div class="card-body">
+            <h2 class="card-title"><%= hotel.hotel_name %></h2>
+            <h7 class="card-text text-muted"><%= hotel.addressline1 %></h7>
+            <h4 class="card-text"><%= hotel.rating_average %> / 10</h4>
+            <p class="card-text"><%= hotel.overview %></p>
+            <div class="d-flex flex-column flex-sm-row">
+            <a href="/hotels/<%= hotel._id %>/edit" class="btn btn-primary m-1">Edit</a>
+                <form action="/hotels/<%= hotel._id %>?_method=delete" method="post">
+                    <div class="m-1">
+                        <button class="btn btn-danger w-100">Delete</button>
+                    </div>
+                </form>
+                <a href="/hotels" class="btn btn-secondary m-1">Back</a>
+            </div>
+        </div> 
+    </div>
+    </div>
+
+    

@@ -1,0 +1,64 @@
+<% layout("layout/boilerplate") -%>
+
+    <div class="row">
+        <div class="col-6 offset-3">
+            <form action="/hotels" method="post" novalidate class="needs-validation">
+                <h3 class="text-center">New Hotel</h3>
+                <div class="mb-2">
+                    <label for="name" class="form-label">Hotel Name</label>
+                    <input class="form-control" type="text" name="hotel[hotel_name]" id="name" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="address" class="form-label">Address</label>
+                    <input class="form-control" type="text" name="hotel[addressline1]" id="address" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="photo" class="form-label">Photo link</label>
+                    <input class="form-control" type="text" name="hotel[photo1]" id="photo" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="overview" class="form-label">Overview</label>
+                    <textarea class="form-control" name="hotel[overview]" id="overview"vstyle="height: 100px" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="rating" class="form-label">Rating</label>
+                    <input class="form-control" type="number" name="hotel[rating_average]" id="rating" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="d-flex  justify-content-evenly">
+                    <button class="btn btn-success w-100 m-2">submit</button>
+                    <a href="/hotels" class="btn btn-secondary w-100 m-2">back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
