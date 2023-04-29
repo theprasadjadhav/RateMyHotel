@@ -26,7 +26,6 @@ const hotelSchema =mongoose.Schema({
     }
 });
 
-const Hotel =mongoose.model("Hotel", hotelSchema);
 
 const validateHotelSchema = joi.object({
     hotel: joi.object({
@@ -39,5 +38,6 @@ const validateHotelSchema = joi.object({
 });
 
 
-module.exports.Hotel = Hotel;
+module.exports.Hotel = mongoose.model("Hotel", hotelSchema);
+
 module.exports.validateHotelSchema = validateHotelSchema;

@@ -65,9 +65,7 @@ const validateHotel = (req, res, next) => {
 
 app.get("/hotels", asyncError(async (req, res) => {
     const hotels = await Hotel.find({});
-    res.render("hotel/index", { hotels });
-    
-        
+    res.render("hotel/index", { hotels });       
 }))
 
 app.get("/hotels/new",  (req, res) => {
