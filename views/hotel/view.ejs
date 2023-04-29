@@ -1,25 +1,74 @@
 <% layout("layout/boilerplate") -%>
     <div class="row mb-3">
-    <div class="card col-lg-6 offset-lg-3">
-        <div class="d-flex justify-content-center mt-3">
-            <img src="<%= hotel.photo1 %>" class="card-img-top rounded" alt="...">
-        </div>
-        <div class="card-body">
-            <h2 class="card-title"><%= hotel.hotel_name %></h2>
-            <h7 class="card-text text-muted"><%= hotel.addressline1 %></h7>
-            <h4 class="card-text"><%= hotel.rating_average %> / 10</h4>
-            <p class="card-text"><%= hotel.overview %></p>
-            <div class="d-flex flex-column flex-sm-row">
-            <a href="/hotels/<%= hotel._id %>/edit" class="btn btn-primary m-1">Edit</a>
-                <form action="/hotels/<%= hotel._id %>?_method=delete" method="post">
-                    <div class="m-1">
-                        <button class="btn btn-danger w-100">Delete</button>
-                    </div>
-                </form>
-                <a href="/hotels" class="btn btn-secondary m-1">Back</a>
+        <div class="card col-lg-6 offset-lg-3">
+            <div class="d-flex justify-content-center mt-3">
+                <img src="<%= hotel.photo1 %>" class="card-img-top rounded" alt="...">
             </div>
-        </div> 
-    </div>
+            <div class="card-body">
+                <h2 class="card-title"><%= hotel.hotel_name %></h2>
+                <h7 class="card-text text-muted"><%= hotel.addressline1 %></h7>
+                <h4 class="card-text"><%= hotel.rating_average %> / 10</h4>
+                <p class="card-text"><%= hotel.body %></p>
+                <div class="d-flex flex-column flex-sm-row">
+                <a href="/hotels/<%= hotel._id %>/edit" class="btn btn-primary m-1">Edit</a>
+                    <form action="/hotels/<%= hotel._id %>?_method=delete" method="post">
+                        <div class="m-1">
+                            <button class="btn btn-danger w-100">Delete</button>
+                        </div>
+                    </form>
+                    <a href="/hotels" class="btn btn-secondary m-1">Back</a>
+                </div>
+            </div> 
+        </div>
+        <div class="col-lg-6 offset-lg-3">
+            <form action="/hotels/<%= hotel._id %>/reviews" method="post" novalidate class="my-3 needs-validation">
+                <h3 class="text-sm-start">Add Review</h3>
+                <div class="mb-2">
+                    <label for="heading" class="form-label">Title</label>
+                    <input class="form-control" type="text" name="review[heading]" id="heading" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="body" class="form-label">Body</label>
+                    <textarea class="form-control" name="review[body]" id="body" vstyle="height: 100px" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="rating" class="form-label">Rating</label>
+                    <input type="range"class="form-range" min="0" max="5" name="review[rating]" id="rating">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <button class="btn btn-success">Add Review</button>
+            </form>
+        </div>
+        <div class="col-lg-6 offset-lg-3">
+            <h3 class="text-sm-start">Reviews</h3>
+            <% for (let review of reviews) {%>
+                <div class="card my-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= review.heading %></h5>
+                        <p class="card-text text-muted"><%= review.body%></p>
+                        <h6 class="card-text"><%= review.rating %>/5</h6>
+                    </div>
+                </div>
+            <%} %>
+        </div>
+
     </div>
 
     

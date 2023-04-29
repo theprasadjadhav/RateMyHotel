@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Hotel, validateHotelSchema } = require("../models/hotel");
+const { Review } = require("../models/review");
 
 
 /*----------------------async error function--------------------------*/
@@ -23,6 +24,16 @@ const validateHotel = (req, res, next) => {
     }
 }
 
+/*----------------------error class--------------------------*/
+class AppError extends Error{
+    constructor(message, status) {
+        super();
+        this.message = message;
+        this.status = status;
+    }
+}
+
+
 router.get("/hotels", asyncError(async (req, res) => {
     const hotels = await Hotel.find({});
     res.render("hotel/index", { hotels });       
@@ -43,8 +54,11 @@ router.post("/hotels",validateHotel, asyncError(async (req, res) => {
 router.get("/hotels/:id", asyncError(async(req, res)=> {
     const { id } = req.params;
     const hotel = await Hotel.findById(id);
-    if(hotel){
-        res.render("hotel/view", { hotel });
+    if (hotel) {
+        const hotelId = hotel._id;
+        const reviews = await
+         Review.find({ hotel: hotelId });
+        res.render("hotel/view", { hotel,reviews });
     } else {
         throw new routerError("hotel not found", 404);
     }

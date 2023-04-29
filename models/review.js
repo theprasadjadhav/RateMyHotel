@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
+const {Hotel} = require("../models/hotel")
 
 const reviewSchema = new mongoose.Schema({
     heading: {
@@ -22,7 +23,7 @@ const reviewSchema = new mongoose.Schema({
 
 const validateReviewSchema = joi.object({
     review: joi.object({
-        heading: joi.String().require(),
+        heading: joi.string().required(),
         body: joi.string().required(),
         rating:joi.number().min(0).max(5).required()
    }).required()

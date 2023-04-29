@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 const ejsMate = require("ejs-mate")
-const { Hotel, validateHotelSchema } = require("./models/hotel");
-const hotelRoutes = require("./routes/hotelRoutes")
+const hotelRoutes = require("./routes/hotelRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 /*----------------------creating app--------------------------*/
 const app = express();
@@ -42,16 +42,17 @@ class AppError extends Error{
 
 /*----------------------hotel routes--------------------------*/
 app.use("/", hotelRoutes);
+app.use("/", reviewRoutes);
 
 
 
 /*----------------------error handling route--------------------------*/
 
 app.use((err, req, res, next) => {
-    if (!(err instanceof AppError)) {
-        err.message = "page not found";
-        err.status = 404;
-    } 
+    // if (!(err instanceof AppError)) {
+    //     err.message = "page not found";
+    //     err.status = 404;
+    // } 
     res.render("error", { err });   
 })
 
