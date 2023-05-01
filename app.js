@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 const ejsMate = require("ejs-mate")
+const session = require("express-session");
+const flash = require("connect-flash");
 const hotelRoutes = require("./routes/hotelRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 
@@ -28,17 +30,20 @@ app.set('views', path.join(__dirname, "views"));
 /*----------------------use--------------------------*/
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
-app.use(express.static(path.join(__dirname, "public")))
+app.use(express.static(path.join(__dirname, "public")));
 
-
-/*----------------------error class--------------------------*/
-class AppError extends Error{
-    constructor(message, status) {
-        super();
-        this.message = message;
-        this.status = status;
+app.use(session({
+    secret: "this is secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        signed: true,
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7     
     }
-}
+}));
+
+app.use(flash());
 
 /*----------------------hotel routes--------------------------*/
 app.use("/", hotelRoutes);
