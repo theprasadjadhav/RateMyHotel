@@ -57,16 +57,23 @@
             </form>
         </div>
         <div class="col-lg-6 offset-lg-3">
-            <h3 class="text-sm-start">Reviews</h3>
-            <% for (let review of reviews) {%>
-                <div class="card my-3">
-                    <div class="card-body">
-                        <h5 class="card-title"><%= review.heading %></h5>
-                        <p class="card-text text-muted"><%= review.body%></p>
-                        <h6 class="card-text"><%= review.rating %>/5</h6>
+            <% if (reviews.length>0){ %>
+                <h3 class="text-sm-start">Reviews</h3>
+                <% for (let review of reviews) {%>
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= review.heading %></h5>
+                            <p class="card-text text-muted"><%= review.body%></p>
+                            <h6 class="card-text"><%= review.rating %>/5</h6>
+                        </div>
+                        <form action="/reviews/<%= review._id %>?_method=delete" method="post">
+                            <div class="m-1">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </div>
+                        </form>
                     </div>
-                </div>
-            <%} %>
+                <%} %>
+            <% } %>
         </div>
 
     </div>

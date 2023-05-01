@@ -4,11 +4,11 @@ const { Review, validateReviewSchema } = require("../models/review");
 const { Hotel } = require("../models/hotel");
 
 /*----------------------async error function--------------------------*/
-const asyncCatch = (fn) => {
-    return function (req, res, next) {
-        fn(req, res, next).catch(err => next(err));
-    }
-}
+const asyncCatch = require("../utils/asyncCatchFunction")
+
+/*----------------------error class--------------------------*/
+const AppError = require("../utils/errorClass");
+
 
 /*----------------------validate review middle--------------------------*/
 const validateReview = (req, res, next) => {
@@ -22,14 +22,8 @@ const validateReview = (req, res, next) => {
     }
 }
 
-/*----------------------error class--------------------------*/
-class AppError extends Error{
-    constructor(message, status) {
-        super();
-        this.message = message;
-        this.status = status;
-    }
-}
+
+
 
 router.post("/hotels/:id/reviews",validateReview, asyncCatch(async (req, res) => {
     const hotelId = req.params.id;
@@ -43,6 +37,18 @@ router.post("/hotels/:id/reviews",validateReview, asyncCatch(async (req, res) =>
         throw new AppError("hotel not found", 404);
     }
 
+}))
+
+router.delete("/reviews/:id", asyncCatch(async (req, res) => {
+    const { id } = req.params;
+    const review = await Review.findById(id);
+    if (review) {
+        const hotelId = review.hotel;
+        await Review.findByIdAndDelete(id);
+        res.redirect(`/hotels/${hotelId}`);
+    } else {
+        throw AppError("review not found", 404);
+    }
 }))
 
 module.exports = router;
