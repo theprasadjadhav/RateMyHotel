@@ -37,6 +37,7 @@ router.get("/hotels/new",  (req, res) => {
 router.post("/hotels",validateHotel, asyncCatch(async (req, res) => {
     const hotel = new Hotel(req.body.hotel);
     await hotel.save();
+    req.flash('success', 'Successfully made a new Hotel!');
     res.redirect(`/hotels`);
 
 }))
@@ -51,7 +52,8 @@ router.get("/hotels/:id", asyncCatch(async(req, res)=> {
          Review.find({ hotel: hotelId });
         res.render("hotel/view", { hotel,reviews });
     } else {
-        throw new AppError("hotel not found", 404);
+        req.flash("error", "hotel not found");
+        res.redirect(`/hotels`);
     }
     
 }))
@@ -81,6 +83,7 @@ router.put("/hotels/:id",validateHotel, asyncCatch(async(req, res)=> {
 router.delete("/hotels/:id", asyncCatch(async (req, res) => {
     const { id } = req.params;
     await Hotel.findByIdAndDelete(id);
+    req.flash('success', 'Successfully deleted hotel')
     res.redirect("/hotels");
 }))
 

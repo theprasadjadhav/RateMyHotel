@@ -45,6 +45,14 @@ app.use(session({
 
 app.use(flash());
 
+/*----------------------flash middleware--------------------------*/
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
+
+
 /*----------------------hotel routes--------------------------*/
 app.use("/", hotelRoutes);
 app.use("/", reviewRoutes);

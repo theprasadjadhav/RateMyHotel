@@ -32,6 +32,7 @@ router.post("/hotels/:id/reviews",validateReview, asyncCatch(async (req, res) =>
         const review = new Review(req.body.review);
         review.hotel = hotel;
         await review.save();
+        req.flash('success', 'Successfully added review')
         res.redirect(`/hotels/${hotelId}`);
     } else {
         throw new AppError("hotel not found", 404);
@@ -45,6 +46,7 @@ router.delete("/reviews/:id", asyncCatch(async (req, res) => {
     if (review) {
         const hotelId = review.hotel;
         await Review.findByIdAndDelete(id);
+        req.flash('success', 'Successfully deleted review')
         res.redirect(`/hotels/${hotelId}`);
     } else {
         throw AppError("review not found", 404);

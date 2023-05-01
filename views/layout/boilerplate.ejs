@@ -12,11 +12,13 @@
     <%- include("../partials/navbar") %>
 
     <main class="container mt-3">
+        <%- include("../partials/flash.ejs") %>
         <%- body -%>
     </main>
 
     <%- include("../partials/footer") %>
 
+    <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/formValidation.js"></script>    
 </body>
 </html>
