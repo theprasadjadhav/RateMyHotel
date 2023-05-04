@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { Review, validateReviewSchema } = require("../models/review");
 const { Hotel } = require("../models/hotel");
+const { isLogedIn } = require("../utils/middlewares");
+
 
 /*----------------------async error function--------------------------*/
 const asyncCatch = require("../utils/asyncCatchFunction")
@@ -25,13 +27,14 @@ const validateReview = (req, res, next) => {
 
 
 
-router.post("/hotels/:id/reviews",validateReview, asyncCatch(async (req, res) => {
+router.post("/hotels/:id/reviews",isLogedIn,validateReview, asyncCatch(async (req, res) => {
     const hotelId = req.params.id;
     const hotel = await Hotel.findById(hotelId);
     if (hotel) {
         const review = new Review(req.body.review);
         review.hotel = hotel;
         await review.save();
+        req.flash('success', 'Successfully added review')
         res.redirect(`/hotels/${hotelId}`);
     } else {
         throw new AppError("hotel not found", 404);
@@ -39,12 +42,13 @@ router.post("/hotels/:id/reviews",validateReview, asyncCatch(async (req, res) =>
 
 }))
 
-router.delete("/reviews/:id", asyncCatch(async (req, res) => {
+router.delete("/reviews/:id",isLogedIn, asyncCatch(async (req, res) => {
     const { id } = req.params;
     const review = await Review.findById(id);
     if (review) {
         const hotelId = review.hotel;
         await Review.findByIdAndDelete(id);
+        req.flash('success', 'Successfully deleted review')
         res.redirect(`/hotels/${hotelId}`);
     } else {
         throw AppError("review not found", 404);

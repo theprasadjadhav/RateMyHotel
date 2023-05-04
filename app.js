@@ -4,8 +4,17 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 const ejsMate = require("ejs-mate")
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const localStategy = require("passport-local");
+
+const { User } = require("./models/user");
+
+const userRoutes = require("./routes/userRoutes");
 const hotelRoutes = require("./routes/hotelRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const user = require("../node/authentication/models/user");
 
 /*----------------------creating app--------------------------*/
 const app = express();
@@ -28,19 +37,41 @@ app.set('views', path.join(__dirname, "views"));
 /*----------------------use--------------------------*/
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
-app.use(express.static(path.join(__dirname, "public")))
+app.use(express.static(path.join(__dirname, "public")));
 
-
-/*----------------------error class--------------------------*/
-class AppError extends Error{
-    constructor(message, status) {
-        super();
-        this.message = message;
-        this.status = status;
+app.use(session({
+    secret: "this is secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        signed: true,
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7     
     }
-}
+}));
+
+app.use(flash());
+
+/*---------------------passport--------------------------*/
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+/*----------------------flash middleware--------------------------*/
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
+
 
 /*----------------------hotel routes--------------------------*/
+app.use("/", userRoutes);
 app.use("/", hotelRoutes);
 app.use("/", reviewRoutes);
 

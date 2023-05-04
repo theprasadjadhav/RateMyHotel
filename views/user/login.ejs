@@ -1,0 +1,29 @@
+<% layout("layout/boilerplate.ejs") -%>
+    <div class="row">
+        <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+            <form action="/login" method="post" novalidate class="d-flex flex-column needs-validation">
+                <h3 class="text-center">Login</h3>
+                <div class="mb-2">
+                    <label for="username" class="form-label">Username</label>
+                    <input class="form-control" type="text" name="username" id="username" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="password" class="form-label">Password</label>
+                    <input class="form-control" type="password" name="password" id="password" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        required!
+                    </div>
+                </div>
+                <button class="btn btn-success mt-2">Login</button>
+            </form>
+        </div> 
+    </div>
