@@ -6,8 +6,15 @@ const path = require("path");
 const ejsMate = require("ejs-mate")
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const localStategy = require("passport-local");
+
+const { User } = require("./models/user");
+
+const userRoutes = require("./routes/userRoutes");
 const hotelRoutes = require("./routes/hotelRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const user = require("../node/authentication/models/user");
 
 /*----------------------creating app--------------------------*/
 const app = express();
@@ -45,8 +52,18 @@ app.use(session({
 
 app.use(flash());
 
+/*---------------------passport--------------------------*/
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 /*----------------------flash middleware--------------------------*/
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
@@ -54,6 +71,7 @@ app.use((req, res, next) => {
 
 
 /*----------------------hotel routes--------------------------*/
+app.use("/", userRoutes);
 app.use("/", hotelRoutes);
 app.use("/", reviewRoutes);
 

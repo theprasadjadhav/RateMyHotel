@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Hotel, validateHotelSchema } = require("../models/hotel");
 const { Review } = require("../models/review");
+const { isLogedIn } = require("../utils/middlewares");
 
 
 /*----------------------async error function--------------------------*/
@@ -30,11 +31,11 @@ router.get("/hotels", asyncCatch(async (req, res) => {
     res.render("hotel/index", { hotels });       
 }))
 
-router.get("/hotels/new",  (req, res) => {
+router.get("/hotels/new", isLogedIn, (req, res) => {
     res.render("hotel/new");
 })
 
-router.post("/hotels",validateHotel, asyncCatch(async (req, res) => {
+router.post("/hotels",isLogedIn,validateHotel, asyncCatch(async (req, res) => {
     const hotel = new Hotel(req.body.hotel);
     await hotel.save();
     req.flash('success', 'Successfully made a new Hotel!');
@@ -58,7 +59,7 @@ router.get("/hotels/:id", asyncCatch(async(req, res)=> {
     
 }))
 
-router.get("/hotels/:id/edit", asyncCatch(async (req, res) => {
+router.get("/hotels/:id/edit",isLogedIn, asyncCatch(async (req, res) => {
     const { id } = req.params;
     const hotel = await Hotel.findById(id);
     if(hotel){
@@ -69,7 +70,7 @@ router.get("/hotels/:id/edit", asyncCatch(async (req, res) => {
    
 }))
 
-router.put("/hotels/:id",validateHotel, asyncCatch(async(req, res)=> {
+router.put("/hotels/:id",isLogedIn,validateHotel, asyncCatch(async(req, res)=> {
     const { id } = req.params;
     const hotel = await Hotel.findByIdAndUpdate(id,{...req.body.hotel},{new:true});
     if (hotel) {
@@ -80,7 +81,7 @@ router.put("/hotels/:id",validateHotel, asyncCatch(async(req, res)=> {
     }
 }))
 
-router.delete("/hotels/:id", asyncCatch(async (req, res) => {
+router.delete("/hotels/:id",isLogedIn, asyncCatch(async (req, res) => {
     const { id } = req.params;
     await Hotel.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted hotel')
