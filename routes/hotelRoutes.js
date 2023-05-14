@@ -24,6 +24,22 @@ const validateHotel = (req, res, next) => {
     }
 }
 
+const isHotelAuthor = async (req, res, next) => {
+    const { id } = req.params;
+    const hotel = await Hotel.findById(id);
+    if (hotel) {
+        if (hotel.author.equals(req.user._id)) {
+            next();
+        } else {
+            req.flash("error", "You do not have permission to do this")
+            res.redirect("/hotels")
+        }
+    }
+    else {
+        req.flash("error", "Hotel not found");
+        res.redirect("/hotels")
+    }
+}
 
 
 router.get("/hotels", asyncCatch(async (req, res) => {
@@ -37,6 +53,7 @@ router.get("/hotels/new", isLogedIn, (req, res) => {
 
 router.post("/hotels",isLogedIn,validateHotel, asyncCatch(async (req, res) => {
     const hotel = new Hotel(req.body.hotel);
+    hotel.author = req.user._id;
     await hotel.save();
     req.flash('success', 'Successfully made a new Hotel!');
     res.redirect(`/hotels`);
@@ -46,11 +63,11 @@ router.post("/hotels",isLogedIn,validateHotel, asyncCatch(async (req, res) => {
 
 router.get("/hotels/:id", asyncCatch(async(req, res)=> {
     const { id } = req.params;
-    const hotel = await Hotel.findById(id);
+    const hotel = await Hotel.findById(id).populate('author','name');
     if (hotel) {
         const hotelId = hotel._id;
-        const reviews = await
-         Review.find({ hotel: hotelId });
+        const reviews = await Review.find({ hotel: hotelId }).populate('author', 'name');
+        console.log(reviews);
         res.render("hotel/view", { hotel,reviews });
     } else {
         req.flash("error", "hotel not found");
@@ -59,29 +76,20 @@ router.get("/hotels/:id", asyncCatch(async(req, res)=> {
     
 }))
 
-router.get("/hotels/:id/edit",isLogedIn, asyncCatch(async (req, res) => {
+router.get("/hotels/:id/edit",isLogedIn,isHotelAuthor, asyncCatch(async (req, res) => {
     const { id } = req.params;
     const hotel = await Hotel.findById(id);
-    if(hotel){
-        res.render("hotel/edit", { hotel });
-    } else {
-        throw new AppError("hotel not found", 404);
-    }
-   
+    res.render("hotel/edit", { hotel });
 }))
 
-router.put("/hotels/:id",isLogedIn,validateHotel, asyncCatch(async(req, res)=> {
+router.put("/hotels/:id",isLogedIn,isHotelAuthor, validateHotel, asyncCatch(async(req, res)=> {
     const { id } = req.params;
     const hotel = await Hotel.findByIdAndUpdate(id,{...req.body.hotel},{new:true});
-    if (hotel) {
-        res.redirect(`/hotels/${hotel._id}`);
-    }
-    else {
-        throw new AppError("hotel not found", 404);
-    }
+    res.redirect(`/hotels/${hotel._id}`);
+    
 }))
 
-router.delete("/hotels/:id",isLogedIn, asyncCatch(async (req, res) => {
+router.delete("/hotels/:id",isLogedIn,isHotelAuthor, asyncCatch(async (req, res) => {
     const { id } = req.params;
     await Hotel.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted hotel')

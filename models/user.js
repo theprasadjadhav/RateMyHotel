@@ -8,13 +8,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: [true,"Email is required"],
         unique: [true, "Already registerd with this email"]
+    },
+    name: {
+        type: String,
+        require: true
     }
 })
 
 userSchema.plugin(passportLocalMongoose);
 
 const validateUserSchema = joi.object({ 
-        email:joi.string().required(),
+        email: joi.string().required(),
+        name:joi.string().required(),
         username: joi.string().alphanum().min(3).max(30).required(),
         password:joi.string().required()
 })

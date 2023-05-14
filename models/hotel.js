@@ -1,10 +1,15 @@
 const joi = require("joi"); 
 const mongoose = require("mongoose");
 
+
 const hotelSchema =mongoose.Schema({
     hotel_name: {
         type: String,
         require:true
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'User'
     },
     addressline1:{
         type: String,

@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
-const {Hotel} = require("../models/hotel")
 
 const reviewSchema = new mongoose.Schema({
     heading: {
         type: String,
         require: true
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'User'
     },
     body: {
         type: String,
@@ -17,7 +20,7 @@ const reviewSchema = new mongoose.Schema({
     },
     hotel: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:Hotel
+        ref:'Hotel'
     }
 })
 
