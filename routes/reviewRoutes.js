@@ -24,6 +24,23 @@ const validateReview = (req, res, next) => {
     }
 }
 
+const isReviewAuthor = async (req, res, next) => {
+    const { id } = req.params;
+    const review = await Review.findById(id);
+    if (review) {
+        if (review.author.equals(req.user._id)) {
+            next();
+        } else {
+            hotelId = review.hotel;
+            req.flash("error", "You do not have permission to do this")
+            res.redirect(`/hotels/${hotelId}`)
+        }
+    }
+    else {
+        req.flash("error", "Review not found");
+        res.redirect("/hotels")
+    }
+}
 
 
 
@@ -33,6 +50,7 @@ router.post("/hotels/:id/reviews",isLogedIn,validateReview, asyncCatch(async (re
     if (hotel) {
         const review = new Review(req.body.review);
         review.hotel = hotel;
+        review.author = req.user._id;
         await review.save();
         req.flash('success', 'Successfully added review')
         res.redirect(`/hotels/${hotelId}`);
@@ -42,17 +60,14 @@ router.post("/hotels/:id/reviews",isLogedIn,validateReview, asyncCatch(async (re
 
 }))
 
-router.delete("/reviews/:id",isLogedIn, asyncCatch(async (req, res) => {
+router.delete("/reviews/:id",isLogedIn,isReviewAuthor, asyncCatch(async (req, res) => {
     const { id } = req.params;
     const review = await Review.findById(id);
-    if (review) {
-        const hotelId = review.hotel;
-        await Review.findByIdAndDelete(id);
-        req.flash('success', 'Successfully deleted review')
-        res.redirect(`/hotels/${hotelId}`);
-    } else {
-        throw AppError("review not found", 404);
-    }
+    const hotelId = review.hotel;
+    await Review.findByIdAndDelete(id);
+    req.flash('success', 'Successfully deleted review')
+    res.redirect(`/hotels/${hotelId}`);
+   
 }))
 
 module.exports = router;

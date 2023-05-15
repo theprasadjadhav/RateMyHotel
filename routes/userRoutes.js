@@ -26,13 +26,13 @@ router.get("/register", isLogedOut, (req, res) => {
 
 router.post("/register",isLogedOut,validateUser,asyncCatch( async (req, res,next) => {
     try {
-        const { email, username, password } = req.body;
+        const { email,name, username, password } = req.body;
 
         const isEmailExist = await User.findOne({email});
         if (isEmailExist) {
             throw new AppError("A user with the given email address is already registered");
         } else {
-            const user = new User({ email, username });
+            const user = new User({ email,name,username });
             const newUser = await User.register(user, password);
             req.login(newUser, (err) => {
                 if (err) {

@@ -14,7 +14,8 @@ const { User } = require("./models/user");
 const userRoutes = require("./routes/userRoutes");
 const hotelRoutes = require("./routes/hotelRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
-const user = require("../node/authentication/models/user");
+
+const AppError = require("./utils/errorClass");
 
 /*----------------------creating app--------------------------*/
 const app = express();
@@ -75,7 +76,9 @@ app.use("/", userRoutes);
 app.use("/", hotelRoutes);
 app.use("/", reviewRoutes);
 
-
+app.all("*", (req, res) => {
+    throw new AppError(404, "page not found");
+})
 
 /*----------------------error handling route--------------------------*/
 
