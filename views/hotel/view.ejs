@@ -1,4 +1,6 @@
 <% layout("layout/boilerplate") -%>
+<link rel="stylesheet" type="text/css" href="/css/star.css" />
+
     <div class="row d-flex flex-column flex-md-row mb-3">
         <div class="card col-md-6 h-100">
             <div class="d-flex justify-content-center mt-3">
@@ -24,50 +26,55 @@
                     </div> 
             </div> 
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 ">
             <% if(currentUser){ %>
-            <div class="col-md-8 offset-2">
-                <form action="/hotels/<%= hotel._id %>/reviews" method="post" novalidate class="mb-lg-2 needs-validation">
-                    <h3 class="text-sm-center fs-5">Add Review</h3>
-                    <div class="mb-2">
-                        <label for="heading" class="form-label fs-6">Title</label>
-                        <input class="form-control" type="text" name="review[heading]" id="heading" required>              
-                    </div>
-                    <div class="mb-2">
-                        <label for="body" class="form-label fs-6">Body</label>
-                        <textarea class="form-control" name="review[body]" id="body" style="height: 60px" required></textarea>  
-                    </div>
-                    <div class="mb-2">
-                        <label for="rating" class="form-label fs-6">Rating</label>
-                        <input type="range"class="form-range" min="0" max="5" name="review[rating]" id="rating">
-                    </div>
-                    <button class="btn btn-success w-100">Add Review</button>
-                </form>
+            <div class="mx-md-3 border rounded mt-3 mt-md-0">
+                <div class="col-10 offset-1 col-md-8 offset-md-2 my-3">
+                    <form action="/hotels/<%= hotel._id %>/reviews" method="post" novalidate class="needs-validation">
+                        <h3 class="text-center fs-5 mt-3 mt-md-0">Add Review</h3>
+                        <div class="mb-2">
+                            <label for="body" class="form-label fs-6">Review</label>
+                            <textarea class="form-control" name="review[body]" id="body" style="height: 60px" maxlength="200"
+                                required></textarea>
+                        </div>
+                        <div class="mt-4">
+                            <fieldset class="starability-heartbeat w-100 d-flex justify-content-center">
+                                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0"  checked aria-label="No rating." />
+                                <input type="radio" id="second-rate1" name="review[rating]" value="1" />
+                                <label for="second-rate1" title="Terrible">1 star</label>
+                                <input type="radio" id="second-rate2" name="review[rating]" value="2" />
+                                <label for="second-rate2" title="Not good">2 stars</label>
+                                <input type="radio" id="second-rate3" name="review[rating]" value="3" />
+                                <label for="second-rate3" title="Average">3 stars</label>
+                                <input type="radio" id="second-rate4" name="review[rating]" value="4" />
+                                <label for="second-rate4" title="Very good">4 stars</label>
+                                <input type="radio" id="second-rate5" name="review[rating]" value="5" />
+                                <label for="second-rate5" title="Amazing">5 stars</label>
+                            </fieldset>
+                        </div>
+                        <button class="btn btn-success w-100">Add Review</button>
+                    </form>
+                </div>
             </div>
             <% } %>
-            <div class="px-3">
+            <div class="px-md-3">
                 <% if (reviews.length>0){ %>
-                    <h3 class="text-sm-start fs-5">Reviews</h3>
-                    <div class="vh-100 overflow-auto">
-                        <% for (let review of reviews) {%>
+                    <h3 class="text-center fs-5 mt-2">Reviews</h3>
+                    <div class="overflow-auto vh-100 p-3 border rounded" >
+                        <% for (let i=reviews.length-1;i>=0;i--) {%>
                             <div class="card my-2">
                                 <div class="card-body">
-                                    <h5 class="card-title">
-                                        <%= review.author.name %>
-                                            <h5>
-                                                <hr>
-                                                <p class="card-text fw-normal fs-5">
-                                                    <%= review.heading %>
-                                                </p>
-                                                <p class="card-text text-muted fw-normal fs-6">
-                                                    <%= review.body%>
-                                                </p>
-                                                <h6 class="card-text">
-                                                    <%= review.rating %>/5
-                                                </h6>
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between">
+                                        <h5 class="d-inline card-title text-truncate"><%= reviews[i].author.name %><h5>
+                                        <p class="starability-result m-0 overflow-hidden" data-rating="<%= reviews[i].rating %>">
+                                            Rated: <%= reviews[i].rating %> stars
+                                        </p>
+                                    </div>
+                                    <hr class="m-0">
+                                    <p class="card-text text-muted fw-normal fs-6"><%= reviews[i].body%></p>
                                 </div>
-                                <% if(currentUser && review.author.equals(currentUser._id)){ %>
-                                    <form action="/reviews/<%= review._id %>?_method=delete" method="post">
+                                <% if(currentUser && reviews[i].author.equals(currentUser._id)){ %>
+                                    <form action="/reviews/<%= reviews[i]._id %>?_method=delete" method="post">
                                         <div class="m-1">
                                             <button class="btn btn-sm btn-danger">Delete</button>
                                         </div>
