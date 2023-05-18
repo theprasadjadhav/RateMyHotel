@@ -1,8 +1,8 @@
 <% layout("layout/boilerplate") -%>
 
     <div class="row">
-        <div class="col-6 offset-3">
-            <form action="/hotels/<%= hotel._id %>?_method=put" method="post" novalidate class="needs-validation">
+        <div class="col-md-6 offset-md-3">
+            <form action="/hotels/<%= hotel._id %>?_method=put" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
                 <h3 class="text-center">New Hotel</h3>
                 <div class="mb-2">
                     <label for="name" class="form-label">Hotel Name</label>
@@ -25,14 +25,27 @@
                     </div>
                 </div>
                 <div class="mb-2">
-                    <label for="photo" class="form-label">Photo link</label>
-                    <input class="form-control" type="text" name="hotel[photo1]" id="photo" value="<%= hotel.photo1 %>" required>
+                    <label for="photos" class="form-label">Upload Photos</label>
+                    <input class="form-control" type="file" id="photos" name="photos" multiple <%=hotel.photos.length<3?'':'disabled'%>>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
                     <div class="invalid-feedback">
                         required!
                     </div>
+                </div>
+                <div class="row mb-2">
+                    <label class="form-label">Delete Photos</label>
+                    <% for(img of hotel.photos){ %>
+                        <div class="col-3">
+                            <div class="image-checkbox">
+                                <input type="checkbox" class="custom-control-input position-absolute m-1" name="deletePhotos[]" value="<%= img.filename %>" id="<%= img.filename %>">
+                                <label class="custom-control-label" for="<%= img.filename %>">
+                                    <img src="<%= img.thumbnail %>" alt="#" class="img-fluid rounded">
+                                </label>
+                            </div>
+                        </div>
+                    <% } %>
                 </div>
                 <div class="mb-2">
                     <label for="overview" class="form-label">Overview</label>
@@ -44,21 +57,12 @@
                         required!
                     </div>
                 </div>
-                <div class="mb-2">
-                    <label for="rating" class="form-label">Rating</label>
-                    <input class="form-control" type="number" name="hotel[rating_average]" id="rating" value="<%= hotel.rating_average %>" required>
-                    <div class="valid-feedback">
-                        Looks good!
-                    </div>
-                    <div class="invalid-feedback">
-                        required!
-                    </div>
-                </div>
-                <div class="d-flex  justify-content-evenly">
+                <div class="d-flex  justify-content-evenly my-2">
                     <button class="btn btn-success w-100 m-2">submit</button>
                     <a href="/hotels/<%= hotel._id %>" class="btn btn-secondary w-100 m-2">back</a>
                 </div>
             </form>
         </div>
     </div>
+    
 
