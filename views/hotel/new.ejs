@@ -2,7 +2,7 @@
 
     <div class="row">
         <div class="col-6 offset-3">
-            <form action="/hotels" method="post" novalidate class="needs-validation">
+            <form action="/hotels" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
                 <h3 class="text-center">New Hotel</h3>
                 <div class="mb-2">
                     <label for="name" class="form-label">Hotel Name</label>
@@ -25,8 +25,8 @@
                     </div>
                 </div>
                 <div class="mb-2">
-                    <label for="photo" class="form-label">Photo link</label>
-                    <input class="form-control" type="text" name="hotel[photo1]" id="photo" required>
+                    <label for="photos" class="form-label">Upload Photos</label>
+                    <input class="form-control" type="file" id="photos" name="photos" multiple>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
@@ -36,17 +36,7 @@
                 </div>
                 <div class="mb-2">
                     <label for="overview" class="form-label">Overview</label>
-                    <textarea class="form-control" name="hotel[overview]" id="overview"vstyle="height: 100px" required></textarea>
-                    <div class="valid-feedback">
-                        Looks good!
-                    </div>
-                    <div class="invalid-feedback">
-                        required!
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label for="rating" class="form-label">Rating</label>
-                    <input class="form-control" type="number" name="hotel[rating_average]" id="rating" required>
+                    <textarea class="form-control" name="hotel[overview]" id="overview" style="height: 100px" required></textarea>
                     <div class="valid-feedback">
                         Looks good!
                     </div>

@@ -1,21 +1,23 @@
 
-<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
-        <a href="#" class="navbar-brand">BookMyHotel</a>
+        <a href="#" class="navbar-brand">ReviewMyHotel</a>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a href="/hotels" class="nav-item nav-link active">Home</a>
-                <a href="#" class="nav-item nav-link">Profile</a>
-                <a href="#" class="nav-item nav-link">Messages</a>
+                <a href="/hotels" class="nav-item nav-link">Home</a>
+                <a href="/hotels/new" class="nav-item nav-link">Create Hotel</a>
             </div>
             <div class="navbar-nav ms-auto">
                 <% if(!currentUser){ %>
                     <a href="/login" class="nav-item nav-link">Log in</a>
+                    <a href="#" class="nav-item nav-link d-none d-md-block">|</a>
                     <a href="/register" class="nav-item nav-link">Sign up</a>
                 <% }else{ %>
+                    <a href="#" class="nav-item nav-link d-none d-md-block text-truncate text-end" style="width: 200px;"><%= currentUser.name %></a>
+                    <a href="#" class="nav-item nav-link d-none d-md-block">|</a>
                     <a href="/logout" class="nav-item nav-link">Log out</a>
                 <% } %>
             </div>
