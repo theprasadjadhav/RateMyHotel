@@ -33,12 +33,11 @@
                 <h2 class="card-title"><%= hotel.hotel_name %></h2>
                 <h6 class="card-text text-muted"><%= hotel.addressline1 %></h6>
                 <div class="d-flex mb-1">
-                    <% for(let i=1; i<=5 ;i++){ if(i<=hotel.rating_average){%>
-                        <span class="d-inline" style="font-size:150%;color:rgb(245, 189, 35);">&starf;</span>
-                        <% }else {%>
-                            <span style="font-size:150%;">&star;</span>
-                            <% } %>
-                                <% } %>
+                    <span class="text-bg-<%= hotel.rating_average>3.5?'success':hotel.rating_average>2.5?'warning':'danger' %> rounded px-2 my-1 h-75">
+                        <%= hotel.getRating %> &starf;</span>
+                        <span class="p-1">
+                            <%=hotel.number_of_ratings %> rating<%= hotel.number_of_ratings==1?"":"s" %>
+                        </span>
                 </div>
                 <h7 class="card-text text-muted align-self-end">- By <%= hotel.author.name %></h7>
                 <hr>
@@ -65,12 +64,6 @@
                         <div class="mb-2">
                             <label for="photos" class="form-label">Upload Photos</label>
                             <input class="form-control" type="file" id="photos" name="photos" multiple>
-                            <div class="valid-feedback">
-                                Looks good!
-                            </div>
-                            <div class="invalid-feedback">
-                                required!
-                            </div>
                         </div>
                         <div class="mb-2">
                             <label for="body" class="form-label fs-6">Review</label>
@@ -91,6 +84,9 @@
                                 <input type="radio" id="second-rate5" name="review[rating]" value="5" />
                                 <label for="second-rate5" title="Amazing">5 stars</label>
                             </fieldset>
+                            <p id="ratingfeedback" class="text-danger mb-3 visually-hidden">
+                                Please provide rating!
+                            </p>
                         </div>
                         <button class="btn btn-success w-100">Add Review</button>
                     </form>
@@ -129,7 +125,7 @@
                                     <p class="card-text p-2 text-muted fw-normal fs-6"><%= reviews[i].body%></p>
                                 </div>
                                 <% if(currentUser && reviews[i].author.equals(currentUser._id)){ %>
-                                    <form action="/reviews/<%= reviews[i]._id %>?_method=delete" method="post">
+                                    <form action="/hotels/<%= hotel._id %>/reviews/<%= reviews[i]._id %>?_method=delete" method="post">
                                         <div class="m-1">
                                             <button class="btn btn-sm btn-danger  ms-2 m-1">Delete</button>
                                         </div>

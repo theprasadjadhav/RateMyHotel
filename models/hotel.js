@@ -1,7 +1,7 @@
 const joi = require("joi"); 
 const mongoose = require("mongoose");
 const { Review } = require("./review");
-
+const {cloudinary} = require("../cloudinaryConfig")
 
 const photoSchema = new mongoose.Schema({
      url:String,
@@ -35,8 +35,15 @@ const hotelSchema =new mongoose.Schema({
         min: 0,
         max:10,
         require:true
+    },
+    number_of_ratings: {
+        type:Number
     }
 });
+
+hotelSchema.virtual("getRating").get(function () {
+    return this.rating_average.toFixed(1);
+})
 
 
 const validateHotelSchema = joi.object({
@@ -50,7 +57,10 @@ const validateHotelSchema = joi.object({
 
 hotelSchema.post('findOneAndDelete', async function (hotel) {
     if (hotel) {
-        await Review.deleteMany({hotel})
+        const reviewsToDelete = await Review.find({ hotel })
+        for (let review of reviewsToDelete) {
+            await Review.findByIdAndDelete(review._id);   
+        }
     }
 })
 

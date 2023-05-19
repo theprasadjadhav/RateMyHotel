@@ -16,6 +16,7 @@ module.exports.createNewHotel = asyncCatch(async (req, res) => {
     const hotel = new Hotel(req.body.hotel);
     hotel.photos = req.files.map(f => ({ url: f.path, filename: f.filename }));
     hotel.rating_average = 0;
+    hotel.number_of_ratings = 0;
     hotel.author = req.user._id;
     await hotel.save();
     req.flash('success', 'Successfully made a new Hotel!');

@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
+const {cloudinary} = require("../cloudinaryConfig")
+
 
 const photoSchema = new mongoose.Schema({
     url:String,
@@ -30,12 +32,25 @@ const reviewSchema = new mongoose.Schema({
     photos: [photoSchema],
 })
 
+reviewSchema.post('findOneAndDelete', async function (data,next) {
+    if (data) {
+      for (let img of data.photos) {
+        await cloudinary.uploader.destroy(img.filename);
+        }
+    }
+    next();
+});
+
+
+
 const validateReviewSchema = joi.object({
     review: joi.object({
         body: joi.string().required(),
         rating:joi.number().min(0).max(5).required()
     }).required(),
 })
+
+
 
 
 module.exports.Review = mongoose.model("Review", reviewSchema);
