@@ -36,6 +36,7 @@ const available_photos = document.querySelectorAll('.image-checkbox');
 const upload_photos = document.querySelector('#photos');
 const available_photo_count =available_photos?available_photos.length:0;
 
+if (upload_photos) {        
     upload_photos.addEventListener('change', (e) => {
 
         const files = upload_photos.files;
@@ -44,5 +45,5 @@ const available_photo_count =available_photos?available_photos.length:0;
             upload_photos.value = ""
         }
     });
-
+}
  

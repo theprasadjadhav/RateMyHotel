@@ -21,7 +21,7 @@ const hotelSchema =new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:'User'
     },
-    addressline1:{
+    address:{
         type: String,
         require:true
     },
@@ -38,18 +38,37 @@ const hotelSchema =new mongoose.Schema({
     },
     number_of_ratings: {
         type:Number
+    },
+    geometry: {
+        type: {
+            type: String, 
+            enum: ['Point'], 
+            required: true
+        },
+            coordinates: {
+            type: [Number],
+            required: true
     }
-});
+  }
+},
+{
+    toJSON: { virtuals: true }
+}
+);
 
 hotelSchema.virtual("getRating").get(function () {
     return this.rating_average.toFixed(1);
 })
 
+hotelSchema.virtual("properties.popUpMarkUp").get(function() {
+   return `<strong><a href="/hotels/${this._id}">${this.hotel_name}</a></strong >
+            <p>${this.address}</p>`
+})
 
 const validateHotelSchema = joi.object({
     hotel: joi.object({
         hotel_name: joi.string().required(),
-        addressline1: joi.string().required(),
+        address: joi.string().required(),
         overview: joi.string().required(),
     }).required(),
     deletePhotos:joi.array()

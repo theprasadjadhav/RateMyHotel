@@ -1,5 +1,4 @@
-{
-  "hotels": [
+[
  {
    "hotel_name": "Sai Kaew Beach Resort",
    "addressline1": "8/1 Moo 4 Tumbon Phe Muang",
@@ -1316,4 +1315,3 @@
    "rates_currency": "USD"
  }
 ]
-}
