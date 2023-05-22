@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const joi = require("joi");
+const baseJoi = require("joi");
+const escapeHTMLExtension = require("../utils/joiSanitizeHTML");
 const {cloudinary} = require("../cloudinaryConfig")
 
 
@@ -42,13 +43,15 @@ reviewSchema.post('findOneAndDelete', async function (data,next) {
 });
 
 
-
+const joi = baseJoi.extend(escapeHTMLExtension);
 const validateReviewSchema = joi.object({
-    review: joi.object({
-        body: joi.string().required(),
-        rating:joi.number().min(0).max(5).required()
-    }).required(),
-})
+  review: joi
+    .object({
+      body: joi.string().required().escapeHTML(),
+      rating: joi.number().min(0).max(5).required(),
+    })
+    .required(),
+});
 
 
 

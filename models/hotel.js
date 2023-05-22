@@ -1,7 +1,8 @@
-const joi = require("joi"); 
+const baseJoi = require("joi"); 
+const escapeHTMLExtension = require("../utils/joiSanitizeHTML")
+
 const mongoose = require("mongoose");
 const { Review } = require("./review");
-const {cloudinary} = require("../cloudinaryConfig")
 
 const photoSchema = new mongoose.Schema({
      url:String,
@@ -65,14 +66,6 @@ hotelSchema.virtual("properties.popUpMarkUp").get(function() {
             <p>${this.address}</p>`
 })
 
-const validateHotelSchema = joi.object({
-    hotel: joi.object({
-        hotel_name: joi.string().required(),
-        address: joi.string().required(),
-        overview: joi.string().required(),
-    }).required(),
-    deletePhotos:joi.array()
-});
 
 hotelSchema.post('findOneAndDelete', async function (hotel) {
     if (hotel) {
@@ -82,6 +75,20 @@ hotelSchema.post('findOneAndDelete', async function (hotel) {
         }
     }
 })
+
+
+const joi = baseJoi.extend(escapeHTMLExtension);
+const validateHotelSchema = joi.object({
+  hotel: joi
+    .object({
+      hotel_name: joi.string().required().escapeHTML(),
+      address: joi.string().required().escapeHTML(),
+      overview: joi.string().required().escapeHTML(),
+    })
+    .required(),
+  deletePhotos: joi.array(),
+});
+
 
 
 module.exports.Hotel = mongoose.model("Hotel", hotelSchema);
