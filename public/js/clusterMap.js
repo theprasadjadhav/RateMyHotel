@@ -1,6 +1,4 @@
 
-console.log(hotels)
-
 mapboxgl.accessToken = mapbox_token;
 const map = new mapboxgl.Map({
     container: 'map',
@@ -128,4 +126,5 @@ map.on('load', () => {
     });
 
     map.addControl(new mapboxgl.FullscreenControl());
+    
 });

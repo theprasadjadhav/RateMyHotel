@@ -15,3 +15,5 @@ const hotelMarker = new mapboxgl.Marker()
         .setHTML(hotel.properties.popUpMarkUp)
     )
     .addTo(map);
+
+map.addControl(new mapboxgl.NavigationControl());    
