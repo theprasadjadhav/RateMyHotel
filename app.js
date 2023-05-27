@@ -27,9 +27,9 @@ const AppError = require("./utils/errorClass");
 const app = express();
 
 /*----------------------mongoose connection--------------------------*/
-const Atlas_url = process.env.Atlas_url;
-// mongodb://127.0.0.1:27017/hotel
-mongoose.connect("mongodb://127.0.0.1:27017/hotel");
+const db_url = process.env.Atlas_url || "mongodb://127.0.0.1:27017/hotel";
+
+mongoose.connect(db_url);
 
 const db = mongoose.connection;
 
@@ -49,22 +49,23 @@ app.use(mongoSanitize());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-
+const secret = process.env.SECRET || "this is secret";
 
 const store = MongoStore.create({
-  mongoUrl: "mongodb://127.0.0.1:27017/hotel",
+  mongoUrl: db_url,
   touchAfter: 24 * 60 * 60,
   crypto: {
-    secret: "this is secret",
+    secret,
   },
 });
+
 
 app.use(session({
     store,
     name:"session",
-    secret: "this is secret",
+    secret,
     resave: false,
-    // secure: true,
+    secure: true,
     saveUninitialized: false,
     cookie: {
         signed: true,
@@ -109,16 +110,18 @@ app.all("*", (req, res) => {
 /*----------------------error handling route--------------------------*/
 
 app.use((err, req, res, next) => {
-    // if (!(err instanceof AppError)) {
-    //     err.message = "page not found";
-    //     err.status = 404;
-    // } 
+    if (!(err instanceof AppError)) {
+        err.message = "page not found";
+        err.status = 404;
+    } 
     res.render("error", { err });   
 })
 
 
 /*----------------------listning--------------------------*/
-app.listen("3000", () => {
-    console.log("listening on port 3000");
+const port = process.env.PORT || "3000"
+
+app.listen(port, () => {
+    console.log(`listening on port ${port}`);
 })
 
