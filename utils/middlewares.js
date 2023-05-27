@@ -1,6 +1,7 @@
 const { Hotel, validateHotelSchema } = require("../models/hotel");
 const { Review, validateReviewSchema } = require("../models/review");
 const AppError = require("../utils/errorClass");
+const {validateUserSchema } = require("../models/user");
 
 
 module.exports.isLogedIn = function (req, res, next) {
@@ -125,3 +126,14 @@ module.exports.addRating = async (req, res, next) => {
         res.redirect("/hotels")
     }
 }
+
+module.exports.validateUser = function (req, res, next) {
+  const { error } = validateUserSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((e) => e.message).join(",");
+    req.flash("error", msg);
+    res.redirect("/register");
+  } else {
+    next();
+  }
+};
