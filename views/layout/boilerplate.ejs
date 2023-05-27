@@ -5,20 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/star.css" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/star.css" />
     <title>my website</title>
 </head>
-<body class="d-flex flex-column vh-100">
+<body class="d-flex flex-column justify-content-between vh-100">
     <%- include("../partials/navbar") %>
 
-    <main class="container mt-3">
+    <main class="container my-3">
         <%- include("../partials/flash.ejs") %>
         <%- body -%>
     </main>
 
     <%- include("../partials/footer") %>
-
-    <script src="/js/formValidation.js"></script>    
+    <script src="/js/formValidation.js"></script>
 </body>
 </html>

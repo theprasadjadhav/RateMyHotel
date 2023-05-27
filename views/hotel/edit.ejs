@@ -16,7 +16,7 @@
                 </div>
                 <div class="mb-2">
                     <label for="address" class="form-label">Address</label>
-                    <input class="form-control" type="text" name="hotel[addressline1]" id="address" value="<%= hotel.addressline1 %>" required>
+                    <input class="form-control" type="text" name="hotel[address]" id="address" value="<%= hotel.address %>" required>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
@@ -26,13 +26,8 @@
                 </div>
                 <div class="mb-2">
                     <label for="photos" class="form-label">Upload Photos</label>
-                    <input class="form-control" type="file" id="photos" name="photos" multiple <%=hotel.photos.length<3?'':'disabled'%>>
-                    <div class="valid-feedback">
-                        Looks good!
-                    </div>
-                    <div class="invalid-feedback">
-                        required!
-                    </div>
+                    <input class="form-control" type="file" id="photos" name="photos" multiple>
+                        <p id="file_validate_feedback" class="visually-hidden text-danger mt-1 mb-0"></p>    
                 </div>
                 <div class="row mb-2">
                     <label class="form-label">Delete Photos</label>

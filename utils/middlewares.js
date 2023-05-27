@@ -1,6 +1,7 @@
 const { Hotel, validateHotelSchema } = require("../models/hotel");
 const { Review, validateReviewSchema } = require("../models/review");
 const AppError = require("../utils/errorClass");
+const {validateUserSchema } = require("../models/user");
 
 
 module.exports.isLogedIn = function (req, res, next) {
@@ -69,8 +70,8 @@ module.exports.validateReview = (req, res, next) => {
 }
 
 module.exports.isReviewAuthor = async (req, res, next) => {
-    const { id } = req.params;
-    const review = await Review.findById(id);
+    const { reviewId } = req.params;
+    const review = await Review.findById(reviewId);
     if (review) {
         if (review.author.equals(req.user._id)) {
             next();
@@ -85,3 +86,54 @@ module.exports.isReviewAuthor = async (req, res, next) => {
         res.redirect("/hotels")
     }
 }
+
+module.exports.deleteRating = async (req, res, next) => {
+    const { hotelId,reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+    const hotel = await Hotel.findById(hotelId);
+
+    total_ratings = hotel.number_of_ratings;
+    if (total_ratings === 1) {
+        hotel.rating_average = 0
+        hotel.number_of_ratings = 0;
+     } else {
+        avg_rating = hotel.rating_average;
+        avg_rating *= total_ratings;
+        avg_rating = (avg_rating - review.rating) / (total_ratings - 1);
+        hotel.rating_average = avg_rating;
+        hotel.number_of_ratings = total_ratings - 1;
+    }
+    await hotel.save(); 
+    next();
+}
+
+module.exports.addRating = async (req, res, next) => {
+    const hotelId = req.params.id;
+    const hotel = await Hotel.findById(hotelId);
+    if (hotel) {
+        let avg_rating = hotel.rating_average;
+        let total_number_ratings = hotel.number_of_ratings;
+        let total_rating = avg_rating * total_number_ratings;
+        total_rating += parseInt(req.body.review.rating);
+
+        hotel.rating_average = total_rating / (total_number_ratings + 1);
+        hotel.number_of_ratings += 1;
+       
+        await hotel.save(); 
+        next();
+    }else {
+        req.flash("error", "Hotel not found");
+        res.redirect("/hotels")
+    }
+}
+
+module.exports.validateUser = function (req, res, next) {
+  const { error } = validateUserSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((e) => e.message).join(",");
+    req.flash("error", msg);
+    res.redirect("/register");
+  } else {
+    next();
+  }
+};

@@ -1,4 +1,5 @@
 <% layout("layout/boilerplate") -%>
+
     <div class="row">
         <% for(let hotel of hotels) {%>
         <div class="col-xl-3 col-md-4 col-sm-6 d-flex flex-column flex-sm-row align-items-stretch mb-3">
@@ -9,20 +10,23 @@
                     <img src="/images/image_not_available.png" class="card-img-top" style="width:100%; height:250px" alt="Image not available">
                 <% } %>
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title mb-0"><%= hotel.hotel_name %></h5>
-                    <div class="d-flex mb-1">
-                        <% for(let i=1; i<=5 ;i++){ if(i<=hotel.rating_average){%>
-                            <span class="d-inline" style="font-size:150%;color:rgb(245, 189, 35);">&starf;</span>
-                            <% }else {%>
-                                <span style="font-size:150%;">&star;</span>
-                                <% } %>
-                                    <% } %>
+                    <h5 class="card-title mb-1"><%= hotel.hotel_name %></h5>
+                    <div class="d-flex mb-3">
+                        <span class="text-bg-<%= hotel.rating_average>=3.5?'success':hotel.rating_average>=2.5?'warning':'danger' %> rounded px-2 my-1 h-75"> <%= hotel.getRating %> &starf;</span>
+                        <span class="p-1"><%=hotel.number_of_ratings %> rating<%= hotel.number_of_ratings==1?"":"s" %></span>
                     </div>    
 
                     <a href="/hotels/<%= hotel._id %>" class="btn btn-outline-info mt-auto">View</a>
                 </div>
             </div>
         </div>
-        <% } %>
+        <% } %>    
     </div>
+    <div id="map" class="position-fixed bottom-0 end-0 mb-3 me-3 rounded border-2" style="height: 150px; width: 150px;"></div>
+
+    <script>
+        const mapbox_token = '<%- process.env.MAPBOX_TOKEN %>';
+        const hotels = { features: <%- JSON.stringify(hotels) %>}
+    </script>
+    <script src="/js/clusterMap.js"></script>
     

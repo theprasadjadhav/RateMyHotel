@@ -1,7 +1,8 @@
-const joi = require("joi"); 
+const baseJoi = require("joi"); 
+const escapeHTMLExtension = require("../utils/joiSanitizeHTML")
+
 const mongoose = require("mongoose");
 const { Review } = require("./review");
-
 
 const photoSchema = new mongoose.Schema({
      url:String,
@@ -21,7 +22,7 @@ const hotelSchema =new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:'User'
     },
-    addressline1:{
+    address:{
         type: String,
         require:true
     },
@@ -35,24 +36,59 @@ const hotelSchema =new mongoose.Schema({
         min: 0,
         max:10,
         require:true
+    },
+    number_of_ratings: {
+        type:Number
+    },
+    geometry: {
+        type: {
+            type: String, 
+            enum: ['Point'], 
+            required: true
+        },
+            coordinates: {
+            type: [Number],
+            required: true
     }
-});
+  }
+},
+{
+    toJSON: { virtuals: true }
+}
+);
 
+hotelSchema.virtual("getRating").get(function () {
+    return this.rating_average.toFixed(1);
+})
 
-const validateHotelSchema = joi.object({
-    hotel: joi.object({
-        hotel_name: joi.string().required(),
-        addressline1: joi.string().required(),
-        overview: joi.string().required(),
-    }).required(),
-    deletePhotos:joi.array()
-});
+hotelSchema.virtual("properties.popUpMarkUp").get(function() {
+   return `<strong><a href="/hotels/${this._id}">${this.hotel_name}</a></strong >
+            <p>${this.address}</p>`
+})
+
 
 hotelSchema.post('findOneAndDelete', async function (hotel) {
     if (hotel) {
-        await Review.deleteMany({hotel})
+        const reviewsToDelete = await Review.find({ hotel })
+        for (let review of reviewsToDelete) {
+            await Review.findByIdAndDelete(review._id);   
+        }
     }
 })
+
+
+const joi = baseJoi.extend(escapeHTMLExtension);
+const validateHotelSchema = joi.object({
+  hotel: joi
+    .object({
+      hotel_name: joi.string().required().escapeHTML(),
+      address: joi.string().required().escapeHTML(),
+      overview: joi.string().required().escapeHTML(),
+    })
+    .required(),
+  deletePhotos: joi.array(),
+});
+
 
 
 module.exports.Hotel = mongoose.model("Hotel", hotelSchema);

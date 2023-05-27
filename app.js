@@ -12,6 +12,8 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
 const localStategy = require("passport-local");
+const mongoSanitize = require("express-mongo-sanitize");
+const MongoStore = require("connect-mongo");
 
 const { User } = require("./models/user");
 
@@ -25,7 +27,9 @@ const AppError = require("./utils/errorClass");
 const app = express();
 
 /*----------------------mongoose connection--------------------------*/
-mongoose.connect("mongodb://127.0.0.1:27017/hotel");
+const db_url = process.env.Atlas_url || "mongodb://127.0.0.1:27017/hotel";
+
+mongoose.connect(db_url);
 
 const db = mongoose.connection;
 
@@ -40,13 +44,28 @@ app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, "views"));
 
 /*----------------------use--------------------------*/
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
+app.use(mongoSanitize());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const secret = process.env.SECRET || "this is secret";
+
+const store = MongoStore.create({
+  mongoUrl: db_url,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret,
+  },
+});
+
+
 app.use(session({
-    secret: "this is secret",
+    store,
+    name:"session",
+    secret,
     resave: false,
+    secure: true,
     saveUninitialized: false,
     cookie: {
         signed: true,
@@ -76,6 +95,10 @@ app.use((req, res, next) => {
 
 
 /*----------------------hotel routes--------------------------*/
+
+app.get("/", (req, res) => {
+    res.render("home");
+})
 app.use("/", userRoutes);
 app.use("/", hotelRoutes);
 app.use("/", reviewRoutes);
@@ -87,16 +110,18 @@ app.all("*", (req, res) => {
 /*----------------------error handling route--------------------------*/
 
 app.use((err, req, res, next) => {
-    // if (!(err instanceof AppError)) {
-    //     err.message = "page not found";
-    //     err.status = 404;
-    // } 
+    if (!(err instanceof AppError)) {
+        err.message = "page not found";
+        err.status = 404;
+    } 
     res.render("error", { err });   
 })
 
 
 /*----------------------listning--------------------------*/
-app.listen("3000", () => {
-    console.log("listening on port 3000");
+const port = process.env.PORT || "3000"
+
+app.listen(port, () => {
+    console.log(`listening on port ${port}`);
 })
 

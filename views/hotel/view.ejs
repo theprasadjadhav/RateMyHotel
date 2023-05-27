@@ -1,48 +1,48 @@
 <% layout("layout/boilerplate") -%>
-
+ 
     <div class="row d-flex flex-column flex-md-row mb-3">
-        <div class="card col-md-6 h-100">
-            <div id="hotelCarousel" class="carousel slide mt-3" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <% hotel.photos.forEach((img,i)=>{ %>
-                         <button type="button" data-bs-target="#hotelCarousel" data-bs-slide-to="<%= i %>" class="<%= i===0?"active":"" %>" aria-current="true"></button>
-                        <% }) %>
+        <div class="col-md-6">
+            <div class="card">
+                <div id="hotelCarousel" class="carousel slide m-3" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <% hotel.photos.forEach((img,i)=>{ %>
+                            <button type="button" data-bs-target="#hotelCarousel" data-bs-slide-to="<%= i %>" class="<%= i===0?"active":"" %>" aria-current="true"></button>
+                            <% }) %>
+                    </div>
+                    <div class="carousel-inner">
+                        <% hotel.photos.forEach((img,i)=>{ %>
+                            <div class="carousel-item <%= i===0?"active":"" %>">
+                                <img src="<%= img.url %>" class="d-block w-100 object-fit-cover" style="height: 350px" s alt="...">
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% if(hotel.photos.length >1) {%>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    <% } %>
                 </div>
-                <div class="carousel-inner">
-                    <% hotel.photos.forEach((img,i)=>{ %>
-                        <div class="carousel-item <%= i===0?"active":"" %>">
-                            <img src="<%= img.url %>" class="d-block w-100 rounded" alt="...">
-                        </div>
-                        <% }) %>
-                </div>
-                <% if(hotel.photos.length >1) {%>
-                <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-                <% } %>
-            </div>
-          
-            <div class="card-body d-flex flex-column">
-                <h2 class="card-title"><%= hotel.hotel_name %></h2>
-                <h6 class="card-text text-muted"><%= hotel.addressline1 %></h6>
-                <div class="d-flex mb-1">
-                    <% for(let i=1; i<=5 ;i++){ if(i<=hotel.rating_average){%>
-                        <span class="d-inline" style="font-size:150%;color:rgb(245, 189, 35);">&starf;</span>
-                        <% }else {%>
-                            <span style="font-size:150%;">&star;</span>
-                            <% } %>
-                                <% } %>
-                </div>
-                <h7 class="card-text text-muted align-self-end">- By <%= hotel.author.name %></h7>
-                <hr>
-                <p class="card-text"><%= hotel.overview %></p>
+            
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title"><%= hotel.hotel_name %></h2>
+                    <h6 class="card-text text-muted"><%= hotel.address %></h6>
+                    <div class="d-flex mb-1">
+                        <span class="text-bg-<%= hotel.rating_average>3.5?'success':hotel.rating_average>2.5?'warning':'danger' %> rounded px-2 my-1 h-75">
+                            <%= hotel.getRating %> &starf;</span>
+                            <span class="p-1">
+                                <%=hotel.number_of_ratings %> rating<%= hotel.number_of_ratings==1?"":"s" %>
+                            </span>
+                    </div>
+                    <h7 class="card-text text-muted align-self-end">- By <%= hotel.author.name %></h7>
+                    <hr>
+                    <p class="card-text"><%= hotel.overview %></p>
                     <div class="d-flex flex-column flex-sm-row">
                         <% if(currentUser && hotel.author.equals(currentUser._id)){ %>
                             <a href="/hotels/<%= hotel._id %>/edit" class="btn btn-primary m-1">Edit</a>
@@ -54,53 +54,63 @@
                         <% } %>
                         <a href="/hotels" class="btn btn-secondary m-1">Back</a>
                     </div> 
-            </div> 
-        </div>
-        <div class="col-md-6 ">
-            <% if(currentUser){ %>
-            <div class="mx-md-3 border rounded mt-3 mt-md-0">
-                <div class="col-10 offset-1 col-md-8 offset-md-2 my-3">
-                    <form action="/hotels/<%= hotel._id %>/reviews" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
-                        <h3 class="text-center fs-5 mt-3 mt-md-0">Add Review</h3>
-                        <div class="mb-2">
-                            <label for="photos" class="form-label">Upload Photos</label>
-                            <input class="form-control" type="file" id="photos" name="photos" multiple>
-                            <div class="valid-feedback">
-                                Looks good!
-                            </div>
-                            <div class="invalid-feedback">
-                                required!
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label for="body" class="form-label fs-6">Review</label>
-                            <textarea class="form-control" name="review[body]" id="body" style="height: 60px" maxlength="200"
-                                required></textarea>
-                        </div>
-                        <div class="mt-4">
-                            <fieldset class="starability-heartbeat w-100 d-flex justify-content-center">
-                                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0"  checked aria-label="No rating." />
-                                <input type="radio" id="second-rate1" name="review[rating]" value="1" />
-                                <label for="second-rate1" title="Terrible">1 star</label>
-                                <input type="radio" id="second-rate2" name="review[rating]" value="2" />
-                                <label for="second-rate2" title="Not good">2 stars</label>
-                                <input type="radio" id="second-rate3" name="review[rating]" value="3" />
-                                <label for="second-rate3" title="Average">3 stars</label>
-                                <input type="radio" id="second-rate4" name="review[rating]" value="4" />
-                                <label for="second-rate4" title="Very good">4 stars</label>
-                                <input type="radio" id="second-rate5" name="review[rating]" value="5" />
-                                <label for="second-rate5" title="Amazing">5 stars</label>
-                            </fieldset>
-                        </div>
-                        <button class="btn btn-success w-100">Add Review</button>
-                    </form>
-                </div>
+                </div> 
             </div>
-            <% } %>
+            
+            <div class="border rounded mt-3">
+                <% if(currentUser){ %>
+                    <div class="col-10 offset-1 col-md-8 offset-md-2 my-3">
+                        <form action="/hotels/<%= hotel._id %>/reviews" method="post" novalidate class="needs-validation"
+                            enctype="multipart/form-data">
+                            <h3 class="text-center fs-5 mt-3 mt-md-0">Add Review</h3>
+                            <div class="mb-2">
+                                <label for="photos" class="form-label">Upload Photos</label>
+                                <input class="form-control" type="file" id="photos" name="photos" multiple>
+                                <p id="file_validate_feedback" class="visually-hidden text-danger mt-1 mb-0"></p>
+
+                            </div>
+                            <div class="mb-2">
+                                <label for="body" class="form-label fs-6">Review</label>
+                                <textarea class="form-control" name="review[body]" id="body" style="height: 60px" maxlength="200"
+                                    required></textarea>
+                            </div>
+                            <div class="mt-4">
+                                <fieldset class="starability-heartbeat w-100 d-flex justify-content-center">
+                                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked
+                                        aria-label="No rating." />
+                                    <input type="radio" id="second-rate1" name="review[rating]" value="1" />
+                                    <label for="second-rate1" title="Terrible">1 star</label>
+                                    <input type="radio" id="second-rate2" name="review[rating]" value="2" />
+                                    <label for="second-rate2" title="Not good">2 stars</label>
+                                    <input type="radio" id="second-rate3" name="review[rating]" value="3" />
+                                    <label for="second-rate3" title="Average">3 stars</label>
+                                    <input type="radio" id="second-rate4" name="review[rating]" value="4" />
+                                    <label for="second-rate4" title="Very good">4 stars</label>
+                                    <input type="radio" id="second-rate5" name="review[rating]" value="5" />
+                                    <label for="second-rate5" title="Amazing">5 stars</label>
+                                </fieldset>
+                                <p id="ratingfeedback" class="text-danger mb-3 visually-hidden">
+                                    Please provide rating!
+                                </p>
+                            </div>
+                            <button class="btn btn-success w-100">Add Review</button>
+                        </form>
+                    </div>
+                <% }else{ %>
+                    <div class="d-flex justify-content-center">
+                        <a href="/login" class="btn my-5 text-bg-primary"> Log in to review hotel</a>
+                    </div>
+                <% } %>  
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="px-md-4 w-100 mt-3" style="height: 250px;">
+                <div id='map' class="h-100 w-100 rounded"></div>
+            </div>
             <div class="px-md-3">
-                <% if (reviews.length>0){ %>
-                    <h3 class="text-center fs-5 mt-2">Reviews</h3>
+                <h3 class="text-center fs-5 pt-2">Reviews</h3>
                     <div class="overflow-auto vh-100 p-3 border rounded" >
+                        <% if (reviews.length>0){ %>
                         <% for (let i=reviews.length-1;i>=0;i--) {%>
                             <div class="card my-2">
                                 <div class="card-body">
@@ -114,13 +124,13 @@
                                     <div class="d-flex justify-content-start my-2 mx-1">
                                         <% for(img of reviews[i].photos){ %>
                                             <button type="button" class="btn w-25 p-1" data-bs-toggle="modal" data-bs-target="#<%= img.filename  %>">
-                                                <img src="<%= img.thumbnail %>" alt="#" class="img-fluid rounded-1">
+                                                <img src="<%= img.thumbnail %>" alt="#" class="img-fluid object-fit-cover rounded-1" style="height: 70px;" >
                                             </button>
                                             <div class="modal fade" id="<%= img.filename %>" tabindex="-1" aria-labelledby="ImageModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                                                     <div class="modal-content position-relative">
                                                         <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        <img src="<%= img.url %>" alt="#" class="img-fluid">
+                                                        <div><img src="<%= img.url %>" alt="#" class="img-fluid"></div>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -129,7 +139,7 @@
                                     <p class="card-text p-2 text-muted fw-normal fs-6"><%= reviews[i].body%></p>
                                 </div>
                                 <% if(currentUser && reviews[i].author.equals(currentUser._id)){ %>
-                                    <form action="/reviews/<%= reviews[i]._id %>?_method=delete" method="post">
+                                    <form action="/hotels/<%= hotel._id %>/reviews/<%= reviews[i]._id %>?_method=delete" method="post">
                                         <div class="m-1">
                                             <button class="btn btn-sm btn-danger  ms-2 m-1">Delete</button>
                                         </div>
@@ -137,10 +147,18 @@
                                     <% } %>
                             </div>
                             <%} %>
-                    </div>
-                <% } %>
+                     <% }else{ %>
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <p>No Review Available</p>
+                        </div>
+                    <% } %>
+                </div>
             </div>
         </div>
     </div>
-
+    <script>
+        const mapbox_token = '<%- process.env.MAPBOX_TOKEN %>';
+        const hotel=<%- JSON.stringify(hotel) %>
+    </script>
+    <script src="/js/viewMap.js"></script>
     
