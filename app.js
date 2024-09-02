@@ -27,7 +27,7 @@ const AppError = require("./utils/errorClass");
 const app = express();
 
 /*----------------------mongoose connection--------------------------*/
-const db_url = process.env.Atlas_url || "mongodb://127.0.0.1:27017/hotel";
+const db_url = process.env.ATLAS_URL || "mongodb://127.0.0.1:27017/hotel";
 
 mongoose.connect(db_url);
 
